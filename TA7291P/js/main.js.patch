@@ -1,0 +1,41 @@
+*** websocket_gpio/js/main.js	2015-05-09 09:19:22.000000000 +0900
+--- websocket_gpio_ta7291p/js/main.js	2015-05-09 21:16:50.000000000 +0900
+***************
+*** 6,16 ****
+    var slider = document.getElementById('slider');
+    var brightness = document.getElementById('brightness');
+    var websocket = new WebSocket(wsUri);
+! 
+!   slider.value = 0.0;
+    slider.addEventListener('change', function() {
+!     brightness.innerHTML = slider.value;
+!     websocket.send('{ "port": "18", "brightness": "' + slider.value + '"}');
+    });
+  
+    websocket.addEventListener('open', function(evt) {
+--- 6,30 ----
+    var slider = document.getElementById('slider');
+    var brightness = document.getElementById('brightness');
+    var websocket = new WebSocket(wsUri);
+!   var tmp_value = 0;
+!   var sign = " ";
+!   
+!   slider.value = 50.0;
+    slider.addEventListener('change', function() {
+! 
+!     if (slider.value > 50.0) {
+!        websocket.send('{ "port": "23", "brightness": "0"}');
+!        websocket.send('{ "port": "24", "brightness": "100"}');
+!        tmp_value = (slider.value - 50)*2;
+!        sign = "+";
+!     } else {
+!        websocket.send('{ "port": "23", "brightness": "100"}');
+!        websocket.send('{ "port": "24", "brightness": "0"}');      
+!        tmp_value = (50 - slider.value)*2;
+!        sign = "-";
+!     }  
+!     brightness.innerHTML = sign + tmp_value;
+!     websocket.send('{ "port": "18", "brightness": "' + tmp_value + '"}');
+    });
+  
+    websocket.addEventListener('open', function(evt) {
